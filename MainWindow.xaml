@@ -5,29 +5,57 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ThreadApp"
         mc:Ignorable="d"
-        Title="Thread Manager" Height="500" Width="800">
+        Title="Advanced Thread Manager" Height="600" Width="1000">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
-            <Button x:Name="AddThreadButton" Content="Add Thread" Margin="5" Padding="10,5" Click="AddThreadButton_Click"/>
-            <ComboBox x:Name="ThreadPriorityComboBox" Width="120" Margin="5" SelectedIndex="2">
-                <ComboBoxItem Content="Lowest"/>
-                <ComboBoxItem Content="BelowNormal"/>
-                <ComboBoxItem Content="Normal"/>
-                <ComboBoxItem Content="AboveNormal"/>
-                <ComboBoxItem Content="Highest"/>
-            </ComboBox>
-            <TextBox x:Name="ThreadNameTextBox" Width="120" Margin="5" Text="Worker Thread" />
+        <StackPanel Grid.Row="0" Margin="10">
+            <TextBlock Text="Thread Creation" FontWeight="Bold" Margin="0,0,0,5"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Thread Name:" VerticalAlignment="Center" Margin="5"/>
+                <TextBox Grid.Row="0" Grid.Column="1" x:Name="ThreadNameTextBox" Margin="5" Text="Worker Thread" />
+                
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Priority:" VerticalAlignment="Center" Margin="5"/>
+                <ComboBox Grid.Row="1" Grid.Column="1" x:Name="ThreadPriorityComboBox" Margin="5" SelectedIndex="2">
+                    <ComboBoxItem Content="Lowest"/>
+                    <ComboBoxItem Content="BelowNormal"/>
+                    <ComboBoxItem Content="Normal"/>
+                    <ComboBoxItem Content="AboveNormal"/>
+                    <ComboBoxItem Content="Highest"/>
+                </ComboBox>
+                
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Workload:" VerticalAlignment="Center" Margin="5"/>
+                <ComboBox Grid.Row="2" Grid.Column="1" x:Name="ThreadWorkloadComboBox" Margin="5" SelectedIndex="0">
+                    <ComboBoxItem Content="CPU Intensive"/>
+                    <ComboBoxItem Content="IO Intensive"/>
+                    <ComboBoxItem Content="Mixed Workload"/>
+                    <ComboBoxItem Content="Burst Processing"/>
+                </ComboBox>
+                
+                <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="3" x:Name="AddThreadButton" Content="Add Thread" Margin="5" Padding="10,5" Click="AddThreadButton_Click" VerticalAlignment="Center"/>
+            </Grid>
         </StackPanel>
 
         <ListView Grid.Row="1" x:Name="ThreadListView" Margin="10">
             <ListView.View>
                 <GridView>
+                    <GridViewColumn Header="ID" Width="40" DisplayMemberBinding="{Binding Id}"/>
                     <GridViewColumn Header="Name" Width="120" DisplayMemberBinding="{Binding Name}"/>
                     <GridViewColumn Header="Status" Width="80" DisplayMemberBinding="{Binding Status}"/>
                     <GridViewColumn Header="Progress" Width="200">
@@ -37,6 +65,8 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
+                    <GridViewColumn Header="CPU %" Width="60" DisplayMemberBinding="{Binding CpuUsage, StringFormat={}{0:F1}%}"/>
+                    <GridViewColumn Header="Workload" Width="100" DisplayMemberBinding="{Binding WorkloadType}"/>
                     <GridViewColumn Header="Priority" Width="100" DisplayMemberBinding="{Binding Priority}"/>
                     <GridViewColumn Header="Actions" Width="250">
                         <GridViewColumn.CellTemplate>
@@ -59,6 +89,31 @@
             <Button x:Name="PauseAllButton" Content="Pause All" Width="100" Margin="5" Click="PauseAllButton_Click"/>
             <Button x:Name="ResumeAllButton" Content="Resume All" Width="100" Margin="5" Click="ResumeAllButton_Click"/>
             <Button x:Name="StopAllButton" Content="Stop All" Width="100" Margin="5" Click="StopAllButton_Click"/>
+            <Button x:Name="SynchronizeButton" Content="Synchronize Threads" Width="150" Margin="5" Click="SynchronizeButton_Click"/>
         </StackPanel>
+
+        <GroupBox Grid.Row="3" Header="System Information" Margin="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Margin="5">
+                    <TextBlock Text="Thread Count:" Margin="0,5,0,0"/>
+                    <TextBlock x:Name="ThreadCountText" Text="Active: 0 / Total: 0" Margin="10,0,0,5"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Margin="5">
+                    <TextBlock Text="CPU Usage:" Margin="0,5,0,0"/>
+                    <ProgressBar x:Name="CpuUsageBar" Height="15" Margin="0,5" Maximum="100"/>
+                    <TextBlock x:Name="CpuUsageText" Text="0%" HorizontalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2" Margin="5">
+                    <TextBlock Text="Memory Usage:" Margin="0,5,0,0"/>
+                    <ProgressBar x:Name="MemoryUsageBar" Height="15" Margin="0,5" Maximum="100"/>
+                    <TextBlock x:Name="MemoryUsageText" Text="0 MB" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </GroupBox>
     </Grid>
 </Window>
