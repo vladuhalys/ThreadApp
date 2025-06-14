@@ -452,12 +452,28 @@ public class WorkerThreadViewModel : INotifyPropertyChanged
                 _pauseEvent.Set();
                 _syncBarrier.Reset();
                 
-                // Create and start a new thread
+                // Get the priority safely before creating a new thread
+                ThreadPriority priority = ThreadPriority.Normal;
+                try
+                {
+                    // Only try to get the priority if the thread exists and might still be accessible
+                    if (_thread != null)
+                    {
+                        priority = _thread.Priority;
+                    }
+                }
+                catch
+                {
+                    // If accessing priority fails, use the default priority
+                    priority = ThreadPriority.Normal;
+                }
+                
+                // Create and start a new thread with safely retrieved priority
                 _thread = new Thread(WorkerMethod)
                 {
                     IsBackground = true,
                     Name = Name,
-                    Priority = _thread?.Priority ?? ThreadPriority.Normal
+                    Priority = priority
                 };
                 _thread.Start();
                 _isRunning = true;
